@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Clientes</title>
+  <!--CSS bootStrap-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <!--JS bootStrap-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    label {
+      font-weight: 500;
+    }
+  </style>
+  <script>
+    enviarCliente(nome, dataNascimento, sexo, telefone, documento){
+      const data = {
+        "nome": nome,
+        "dataNascimento": dataNascimento,
+        "sexo": sexo,
+        "telefone": telefone,
+        "documento": documento        
+      }
+      //Chamar a API (o backend)
+      fetch("https://localhost:44314/api/Clientes", {
+        method: "POST",
+        headers: {
+          //O cabeçalho é um JSON
+          'Content-Type': 'application/json'
+        },
+        //O corpo da requisição será um objeto JSON "stringfado" (xxx=xxxx,yyy=yyyy)
+        body: JSON.stringify(data)
+        //Ao enviar o objeto json, virá uma resposta da API        
+      }).then((response) => response.json())
+      //Se der tudo certo, 
+      .then((result) => {
+        Swal.fire(
+          'Cliente cadastrado',
+          'success')
+      //Se ocorrer algum erro,
+      }).catch((error) => {
+        Swal.fire(
+          'Erro',
+          'Cliente NÃO cadastrado',
+          'error')
+      })
+    }
+
+    function salvar() {
+      let nome = document.getElementById("inputNome").value
+      let dataNascimento = document.getElementById("inputDataNascimento").value
+      let sexo = document.getElementById("escolhaOsexo").value
+      let telefone = document.getElementById("inputTelefone").value
+      let documento = document.getElementById("inputDocumento").value
+      let marcouConfirma = document.getElementById("confirmaCheckbox").checked
+
+      console.log(nome, dataNascimento, sexo, telefone, documento, marcouConfirma)
+
+      let erros = []
+
+      if (!marcouConfirma) {
+        erro.push("Todos os campos estão preenchidos corretamente?',<br>'Você marcou a caixa de confirmação?'")
+      }
+
+      //Se a lista de erros estiver vazia
+      if(erros.length == 0){
+        //Neste caso, se o cliente marcou a checkbox e clicou em salvar, 
+        //o método "enviarCliente será chamado".
+        enviarCliente(nome, dataNascimento, sexo, telefone, documento)
+        
+      }
+      else{
+        Swal.fire(
+        'Erro',
+        //join para juntar as strings do array, uma em cada linha
+        erros.join("<br>"),
+        'error'
+      )
+
+      }
+
+      
+
+      return false
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Margem entre o topo da pagina e os botões-->
+  <div class="container-fluid p-2">
+    <a href="index.html" class="btn btn-primary">Voltar</a>
+
+    <h1 style="font-size: 32px;">Cadastre um Cliente</h1>
+    <form onsubmit=" return salvar()">
+      <!--Nome do Cliente-->
+      <div class="form-group">
+        <label for="inputNome">Nome</label>
+        <input type="text" class="form-control" id="inputNome" aria-describedby="nomeHelp"
+          placeholder="Digite o nome do Cliente">
+        <small id="nomeHelp" class="form-text text-muted">Preencha com o nome completo do Cliente</small>
+      </div>
+      <!--Data de Nascimento do Cliente-->
+      <div class="form-group">
+        <label for="inputDataNascimento">Data de Nascimento</label>
+        <input type="date" class="form-control" id="inputDataNascimento" aria-describedby="dataNascimentoHelp"
+          placeholder="Digite a data de Nascimento do Cliente">
+      </div>
+      <!--Gênero do Cliente-->
+      <div class="form-group">
+        <label for="escolhaOsexo">Sexo</label>
+        <select class="form-control" id="escolhaOsexo">
+          <option value="M">M</option>
+          <option value="F">F</option>
+        </select>
+        <small id="escolhaOsexo" class="form-text text-muted">Escolha M para Masculino ou F para Feminino</small>
+      </div>
+      <!--Numero de telefone do Cliente-->
+      <div class="form-group">
+        <label for="inputTelefone">Telefone</label>
+        <input type="text" class="form-control" id="inputTelefone" aria-describedby="telefoneHelp"
+          placeholder="12912345678">
+        <small id="telefoneHelp" class="form-text text-muted">Digite o DDD mais o numero de telefone do Cliente</small>
+      </div>
+      <!--Numero de documento do Cliente-->
+      <div class="form-group">
+        <label for="inputDocumento">Documento</label>
+        <input type="text" class="form-control" id="inputDocumento" aria-describedby="documentoHelp"
+          placeholder="Digite o documento do Cliente">
+        <small id="documentoHelp" class="form-text text-muted">Preencha com o CPF do Cliente se possível</small>
+      </div><br>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="confirmaCheckbox">
+        <label class="form-check-label" for="confirmaCheckbox">Marque a caixa para confirmar o Cadastro do Novo
+          Cliente</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+  </div>
+
+</body>
+
+</html>
